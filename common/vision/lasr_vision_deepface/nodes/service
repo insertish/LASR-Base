@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+import rospy
+
+import cv2_img
+
+from deepface import DeepFace
+
+from lasr_vision_msgs.msg import Embedding
+from lasr_vision_msgs.srv import DeepFaceDetection, DeepFaceDetectionRequest, DeepFaceDetectionResponse
+
+rospy.init_node('deepface')
+
+def detect(request: DeepFaceDetectionRequest) -> DeepFaceDetectionResponse:
+    img = cv2_img.msg_to_cv2_img(request.image_raw)
+    results = DeepFace.represent(img, model_name = request.model)
+
+    return DeepFaceDetectionResponse(
+        detected_faces = [
+            Embedding(
+                vector = result['embedding'],
+                confidence = result['face_confidence'],
+                xywh = [
+                    result['facial_area']['x'],
+                    result['facial_area']['y'],
+                    result['facial_area']['w'],
+                    result['facial_area']['h']
+                ]
+            )
+                for result
+                in results
+        ]
+    )
+
+rospy.Service(f'/deepface/detect', DeepFaceDetection, detect)
+rospy.loginfo('DeepFace service ready!')
+rospy.spin()

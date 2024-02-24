@@ -1,0 +1,11 @@
+<launch>
+    <description>Start the DeepFace service</description>
+    <usage doc="DeepFace service"></usage>
+    <usage doc="Preload face models">preload:=['VGG-Face']</usage>
+
+    <arg name="preload" default="[]" doc="Array of models to preload when starting the service" />
+
+    <node name="deepface_service" pkg="lasr_vision_deepface" type="service" output="screen">
+        <param name="preload" type="yaml" value="$(arg preload)" />
+    </node>
+</launch>

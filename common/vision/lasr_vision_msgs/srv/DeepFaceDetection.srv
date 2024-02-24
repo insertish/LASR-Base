@@ -1,0 +1,19 @@
+# Image to run inference on
+sensor_msgs/Image image_raw
+
+# Face model to use
+#
+# Options include (non-exhaustive):
+# - Facenet512 (99.65%)
+# - SFace (99.60%)
+# - ArcFace (99.41%)
+# - Dlib (99.38%)
+# - Facenet (99.20%)
+# - VGG-Face (98.78%)
+# - [human performance] (97.53%)
+# - OpenFace (93.80%)
+# - DeepID (~)
+string model
+---
+# Detection result
+lasr_vision_msgs/Embedding[] detected_faces
