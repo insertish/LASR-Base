@@ -5,6 +5,27 @@ from PIL import Image
 from sensor_msgs.msg import Image as SensorImage
 
 
+def pillow_img_to_msg(img, stamp=None):
+    """
+    Convert a given Pillow image to sensor image
+
+    :param img: Pillow image
+    :param stamp: rospy Time
+    :return: Sensor Image
+    """
+
+    msg = SensorImage()
+    msg.header.stamp = rospy.Time.now() if stamp is None else stamp
+    msg.width = img.width
+    msg.height = img.height
+    msg.encoding = 'rgb8'
+    msg.is_bigendian = 1
+    msg.step = 3 * img.width
+    msg.data = np.array(img).tobytes()
+
+    return msg
+
+
 def cv2_img_to_msg(img, stamp=None):
     """
     Convert a given cv2 image to sensor image

@@ -1,6 +1,6 @@
 # cv2_img
 
-Helper methods for converting between sensor_msgs and cv2/Pillow format.
+Various Python utilities for working with cv2 and ROS.
 
 This package is maintained by:
 - [Paul Makles](mailto:me@insrt.uk)
@@ -15,8 +15,7 @@ Ensure that the following is readily available wherever you import this package:
 
 - numpy
 - Pillow
-
-Despite the name of the package, cv2 is not actually a dependency.
+- cv2 (for anything besides converting message <=> image)
 
 ## Usage
 
@@ -28,7 +27,7 @@ import cv2_img
 # as Pillow Image
 img = cv2_img.msg_to_pillow_img(request.image_raw)
 
-# as numpy array (for cv2)
+# as numpy array (for cv2 / bgr8)
 img = cv2_img.msg_to_cv2_img(request.image_raw)
 ```
 
@@ -37,6 +36,10 @@ Convert a cv2 image (numpy array) to an image message:
 ```python
 import cv2_img
 
+# from Pillow Image
+msg = cv2_img.pillow_img_to_msg(img)
+
+# from numpy array (cv2 / bgr8)
 msg = cv2_img.cv2_img_to_msg(img)
 ```
 

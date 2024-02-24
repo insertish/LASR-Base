@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+import rospy
+import rospkg
+
+import os
+import cv2_img
+from PIL import Image
+from sensor_msgs.msg import Image as ImageRaw
+
+rospy.init_node("img_publisher", anonymous=True)
+
+rp = rospkg.RosPack()
+package_path = rp.get_path("cv2_img")
+
+IMG_PATH = rospy.get_param('~img_path', os.path.abspath(os.path.join(package_path, 'sample.jpg')))
+
+with Image.open(IMG_PATH) as img:
+    topic = rospy.Publisher(f'/image_raw/1', ImageRaw, queue_size=1, latch=True)
+    topic.publish(cv2_img.pillow_img_to_msg(img))
+
+    rospy.loginfo("Publishing to /topic_name")
+    rospy.spin()
