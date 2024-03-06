@@ -30,13 +30,19 @@ for model in PRELOAD:
 
 def detect(request: DeepFaceDetectionRequest) -> DeepFaceDetectionResponse:
     img = cv2_img.msg_to_cv2_img(request.image_raw)
-    results = DeepFace.represent(
-        img,
-        model_name=request.model,
-        enforce_detection=False,
-        # detector_backend = 'opencv', # default
-        # detector_backend = 'mtcnn', # main
-    )
+
+    try:
+        results = DeepFace.represent(
+            img,
+            model_name=request.model,
+            # detector_backend = 'opencv', # default
+            # detector_backend = 'mtcnn', # main
+        )
+    except Exception as e:
+        rospy.logerr(e)
+        return DeepFaceDetectionResponse(
+            detected_faces=[]
+        )
 
     if DEBUG:
         debug_publisher = None
