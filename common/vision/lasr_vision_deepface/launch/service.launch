@@ -2,10 +2,13 @@
     <description>Start the DeepFace service</description>
     <usage doc="DeepFace service"></usage>
     <usage doc="Preload face models">preload:=['VGG-Face']</usage>
+    <usage doc="Enable debug topic">debug:=true</usage>
 
     <arg name="preload" default="[]" doc="Array of models to preload when starting the service" />
+    <arg name="debug" default="false" doc="Whether to publish detected images to /deepface/debug" />
 
     <node name="deepface_service" pkg="lasr_vision_deepface" type="service" output="screen">
         <param name="preload" type="yaml" value="$(arg preload)" />
+        <param name="debug" type="bool" value="$(arg debug)" />
     </node>
 </launch>

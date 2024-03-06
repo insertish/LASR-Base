@@ -8,6 +8,7 @@
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="me@insrt.uk">Paul Makles</maintainer>
+  <maintainer email="jared.swift@kcl.ac.uk">Jared Swift</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -50,6 +51,8 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>catkin_virtualenv</build_depend>
+  <depend>lasr_vision_msgs</depend>
+  <depend>cv2_img</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

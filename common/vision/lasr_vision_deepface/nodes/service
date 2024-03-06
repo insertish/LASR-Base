@@ -1,35 +1,79 @@
 #!/usr/bin/env python3
+import re
+import os
 import rospy
-
+import rospkg
 import cv2_img
 
 from deepface import DeepFace
 
+from sensor_msgs.msg import Image
 from lasr_vision_msgs.msg import Embedding
 from lasr_vision_msgs.srv import DeepFaceDetection, DeepFaceDetectionRequest, DeepFaceDetectionResponse
 
 rospy.init_node('deepface')
 
+DEBUG = rospy.get_param('~debug', False)
+PRELOAD = rospy.get_param('~preload', [])  # e.g. VGG-Face
+
+debug_publishers = {}
+
+for model in PRELOAD:
+    r = rospkg.RosPack()
+    DeepFace.represent(
+        os.path.join(r.get_path('lasr_vision_deepface'), 'assets',
+                     'darshan-patel-QJEVpydulGs-unsplash.jpg'),
+        model_name=model,
+        enforce_detection=False
+    )
+
+
 def detect(request: DeepFaceDetectionRequest) -> DeepFaceDetectionResponse:
     img = cv2_img.msg_to_cv2_img(request.image_raw)
-    results = DeepFace.represent(img, model_name = request.model)
+    results = DeepFace.represent(
+        img,
+        model_name=request.model,
+        enforce_detection=False,
+        # detector_backend = 'opencv', # default
+        # detector_backend = 'mtcnn', # main
+    )
+
+    if DEBUG:
+        debug_publisher = None
+        if request.dataset in debug_publishers:
+            debug_publisher = debug_publishers[request.dataset]
+        else:
+            topic_name = re.sub(r"[\W_]+", "", request.dataset)
+            debug_publisher = rospy.Publisher(
+                f"/deepface/debug/{topic_name}", Image, queue_size=1
+            )
+
+        for result in results:
+            x = result['facial_area']['x']
+            y = result['facial_area']['y']
+            w = result['facial_area']['w']
+            h = result['facial_area']['h']
+
+            img_cropped = img[y:y+h, x:x+w]
+            debug_publisher.publish(cv2_img.cv2_img_to_msg(img_cropped))
 
     return DeepFaceDetectionResponse(
-        detected_faces = [
+        detected_faces=[
             Embedding(
-                vector = result['embedding'],
-                confidence = result['face_confidence'],
-                xywh = [
+                vector=result['embedding'],
+                confidence=result['face_confidence'],
+                xywh=[
                     result['facial_area']['x'],
                     result['facial_area']['y'],
                     result['facial_area']['w'],
                     result['facial_area']['h']
                 ]
             )
-                for result
-                in results
+            for result
+            in results
         ]
     )
+
 
 rospy.Service(f'/deepface/detect', DeepFaceDetection, detect)
 rospy.loginfo('DeepFace service ready!')
