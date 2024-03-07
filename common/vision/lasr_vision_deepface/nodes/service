@@ -36,7 +36,7 @@ def detect(request: DeepFaceDetectionRequest) -> DeepFaceDetectionResponse:
             img,
             model_name=request.model,
             # detector_backend = 'opencv', # default
-            # detector_backend = 'mtcnn', # main
+            detector_backend='mtcnn',  # more performant
         )
     except Exception as e:
         rospy.logerr(e)
