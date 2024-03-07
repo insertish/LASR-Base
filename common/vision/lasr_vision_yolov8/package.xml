@@ -53,6 +53,7 @@
   <depend>lasr_vision_msgs</depend>
   <depend>cv2_img</depend>
   <depend>cv2_pcl</depend>
+  <depend>markers</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
