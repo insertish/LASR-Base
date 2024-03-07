@@ -46,10 +46,10 @@ def detect(request: DeepFaceDetectionRequest) -> DeepFaceDetectionResponse:
 
     if DEBUG:
         debug_publisher = None
-        if request.dataset in debug_publishers:
-            debug_publisher = debug_publishers[request.dataset]
+        if request.model in debug_publishers:
+            debug_publisher = debug_publishers[request.model]
         else:
-            topic_name = re.sub(r"[\W_]+", "", request.dataset)
+            topic_name = re.sub(r"[\W_]+", "", request.model)
             debug_publisher = rospy.Publisher(
                 f"/deepface/debug/{topic_name}", Image, queue_size=1
             )
