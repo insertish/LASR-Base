@@ -1,11 +1,12 @@
-#!/usr/bin/env python3
-
 import smach
 
 from lasr_skills import Detect3D
 
 
 from typing import List
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
@@ -27,8 +28,7 @@ class Detect3DInArea(smach.StateMachine):
         def execute(self, userdata):
             satisfied_points = [
                 self.area_polygon.contains(Point(pose[0], pose[1]))
-                for (_, pose)
-                in userdata.detections_3d
+                for (_, pose) in userdata.detections_3d
             ]
 
             filtered_detections = [
@@ -38,7 +38,6 @@ class Detect3DInArea(smach.StateMachine):
             ]
 
             userdata.detections_3d = filtered_detections
-
             return "succeeded"
 
     def __init__(
