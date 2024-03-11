@@ -2,10 +2,7 @@ import smach
 
 from lasr_skills import Detect3D
 
-
-from typing import List
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
+from typing import List, Union
 
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
@@ -30,7 +27,6 @@ class Detect3DInArea(smach.StateMachine):
                 self.area_polygon.contains(Point(pose[0], pose[1]))
                 for (_, pose) in userdata.detections_3d
             ]
-
             filtered_detections = [
                 userdata.detections_3d[i]
                 for i in range(0, len(userdata.detections_3d))
@@ -42,10 +38,10 @@ class Detect3DInArea(smach.StateMachine):
 
     def __init__(
         self,
-        area_polygon: List[List[float]],
+        area_polygon: Polygon,
         depth_topic: str = "/xtion/depth_registered/points",
         model: str = "yolov8n-seg.pt",
-        filter: List[str] | None = None,
+        filter: Union[List[str], None] = None,
         confidence: float = 0.5,
         nms: float = 0.3,
     ):
