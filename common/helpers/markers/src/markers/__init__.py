@@ -36,7 +36,7 @@ def create_marker(
 def create_and_publish_marker(
     publisher: rospy.Publisher,
     point_stamped: PointStamped,
-    idx: int | None = None,
+    idx: int = None,
     r: float = 0.0,
     g: float = 1.0,
     b: float = 0.0,

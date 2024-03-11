@@ -21,8 +21,15 @@ import tf2_ros as tf
 import tf2_geometry_msgs  # noqa
 
 
+# global tf buffer
+tf_buffer = tf.Buffer(cache_time=rospy.Duration(10))
+
 # model cache
 loaded_models = {}
+
+
+def start_tf_buffer() -> None:
+    tf.TransformListener(tf_buffer)
 
 
 def load_model(dataset: str) -> None:
@@ -97,7 +104,9 @@ def detect_3d(
     """
     Run YOLO 3D inference on given detection request
     """
-    tf_buffer = tf.Buffer()
+
+    # Save the time for transformation later
+    stamp = rospy.Time(rospy.get_time())
 
     # Extract rgb image from pointcloud
     rospy.loginfo("Decoding")
@@ -131,11 +140,10 @@ def detect_3d(
             centroid = cv2_pcl.seg_to_centroid(
                 request.pcl, np.array(detection.xyseg))
 
-            point = Point(*centroid)
             point_stamped = PointStamped()
-            point_stamped.point = point
+            point_stamped.point = Point(*centroid)
             point_stamped.header.frame_id = request.pcl.header.frame_id
-            point_stamped.header.stamp = rospy.Time(0)
+            point_stamped.header.stamp = stamp
 
             # TODO: handle tf errors properly
             while not rospy.is_shutdown():
@@ -143,14 +151,17 @@ def detect_3d(
                     detection.point = tf_buffer.transform(
                         point_stamped, "map").point
                     break
-                except Exception:
+                except Exception as e:
+                    rospy.logerr(e)
                     continue
 
             # publish to debug topic
             if debug_point_publisher is not None:
-                markers.create_and_publish_marker(
-                    debug_point_publisher, detection.point
-                )
+                print(detection.point)
+                pass  # tf outputs a Point not PointStamped ?
+                # markers.create_and_publish_marker(
+                #     debug_point_publisher, detection.point
+                # )
 
         detected_objects.append(detection)
 
