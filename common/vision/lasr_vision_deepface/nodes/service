@@ -35,8 +35,8 @@ def detect(request: DeepFaceDetectionRequest) -> DeepFaceDetectionResponse:
         results = DeepFace.represent(
             img,
             model_name=request.model,
-            # detector_backend = 'opencv', # default
-            detector_backend='mtcnn',  # more performant
+            # detector_backend='opencv',  # default, more performant
+            detector_backend='mtcnn',  # more accurate but slow
         )
     except Exception as e:
         rospy.logerr(e)

@@ -106,7 +106,8 @@ def detect_3d(
     """
 
     # Save the time for transformation later
-    stamp = rospy.Time(rospy.get_time())
+    # stamp = rospy.Time(rospy.get_time())
+    stamp = rospy.Time(0)
 
     # Extract rgb image from pointcloud
     rospy.loginfo("Decoding")
